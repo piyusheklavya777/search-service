@@ -1,0 +1,3 @@
+locations:
+  - type: s3
+    bucketName: 'apple'
