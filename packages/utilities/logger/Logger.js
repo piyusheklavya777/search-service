@@ -5,7 +5,7 @@ class Logger {
     this.context = {};
   }
 
-  async info(message, details) {
+  async info(message, details = {}) {
     console.log({
       message,
       details,
@@ -13,7 +13,7 @@ class Logger {
     });
   }
 
-  async error(message, details) {
+  async error(message, details = {}) {
     console.log({
       message,
       details,
@@ -21,7 +21,7 @@ class Logger {
     });
   }
 
-  async silly(message, details) {
+  async silly(message, details = {}) {
     console.log(util.inspect({
       message,
       details,
@@ -29,7 +29,7 @@ class Logger {
     }));
   }
 
-  async updateContext(properties) {
+  async updateContext(properties = {}) {
     this.context = { ...this.context, ...properties };
   }
 
