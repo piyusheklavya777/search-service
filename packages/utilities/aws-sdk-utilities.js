@@ -2,8 +2,6 @@ const _ = require('lodash');
 const AWS = require('aws-sdk');
 const logger = require('./logger');
 
-// AWS.config.update({ region: 'ap-southeast-1' });
-
 const {
   ACCOUNT_ID,
   TEXT_EXTRACTED_NOTIFICATION_SNS,
@@ -78,6 +76,7 @@ async function startExtractText({ bucketName, fileName }) {
   try {
     const syncResponse = await textract.startDocumentAnalysis(params).promise();
     logger.info('response from AWS Textract', syncResponse);
+    return syncResponse;
   } catch (error) {
     logger.silly(
       'error while calling AWS textract startDocumentAnalysis',
