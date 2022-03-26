@@ -6,27 +6,42 @@ class Logger {
   }
 
   async info(message, details = {}) {
-    console.log({
-      message,
-      details,
-      context: this.context,
-    });
+    console.log(
+      util.inspect({
+        message,
+        details,
+        context: this.context,
+      }),
+      false,
+      null,
+      true,
+    );
   }
 
   async error(message, details = {}) {
-    console.log({
-      message,
-      details,
-      context: this.context,
-    });
+    console.log(
+      util.inspect({
+        message,
+        details,
+        context: this.context,
+      }),
+      false,
+      null,
+      true,
+    );
   }
 
   async silly(message, details = {}) {
-    console.log(util.inspect({
-      message,
-      details,
-      context: this.context,
-    }));
+    console.log(
+      util.inspect({
+        message,
+        details,
+        context: this.context,
+      }),
+      false,
+      null,
+      true,
+    );
   }
 
   async updateContext(properties = {}) {
