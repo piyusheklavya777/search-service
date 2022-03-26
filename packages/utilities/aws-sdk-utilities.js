@@ -1,3 +1,4 @@
+const _ = require('lodash');
 const AWS = require('aws-sdk');
 const logger = require('./logger');
 
@@ -30,7 +31,7 @@ async function loadFileFromS3({ bucketName, fileName }) {
   } catch (e) {
     logger.error('Error occurred while trying to load files from s3: ', e);
   }
-  return response;
+  return _.get(response, 'Body');
 }
 
 module.exports = {

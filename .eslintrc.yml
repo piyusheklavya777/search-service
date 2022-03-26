@@ -10,6 +10,7 @@ parserOptions:
   ecmaVersion: latest
 rules:
   curly: 'off'
+  max-len: 'off'
   import/no-unresolved: 'error'
   import/prefer-default-export: 'off'
   no-use-before-define: 'off'
