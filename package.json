@@ -32,6 +32,7 @@
     "eslint-plugin-jest": "^26.1.2",
     "fs": "0.0.1-security",
     "lodash": "^4.17.21",
+    "serverless-pseudo-parameters": "^2.6.1",
     "textract": "^2.5.0"
   }
 }
