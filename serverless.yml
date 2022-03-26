@@ -2,15 +2,47 @@
 
 service: search-service
 frameworkVersion: '3'
+plugins:
+  - serverless-pseudo-parameters
 
 provider:
   name: aws
   runtime: nodejs14.x
-  stage: dev
+  stage: ${opt:stage, 'dev'}
   region: ap-southeast-1
+  environment:
+    APP_ENV: dev
+    REGION: ${self:provider.region}
+    STAGE: ${self:provider.stage}
+    ACCOUNT_ID: "#{AWS::AccountId}"
+    TEXT_EXTRACTED_NOTIFICATION_SNS: AmazonTextract-${opt:stage}-text-extracted-notification
+    PUBLISH_TO_SNS_ROLE: PublishToSNS
+
 
 resources:
   Resources:
+    PublishToSNS:
+      Type: AWS::IAM::Role
+      Properties:
+        RoleName: ${self:provider.environment.PUBLISH_TO_SNS_ROLE}
+        AssumeRolePolicyDocument:
+          Version: '2012-10-17'
+          Statement:
+            - Effect: Allow
+              Principal:
+                Service:
+                  - lambda.amazonaws.com
+                  - textract.amazonaws.com
+              Action: sts:AssumeRole
+        Policies:
+          - PolicyName: policyForSNSPublication
+            PolicyDocument:
+              Version: '2012-10-17'
+              Statement:
+                - Effect: Allow
+                  Action:
+                    - sns:Publish
+                  Resource: "*"
     GetLambdaRole:
       Type: AWS::IAM::Role
       Properties:
@@ -46,6 +78,11 @@ resources:
                     - s3:ListBucket
                     - s3:GetObject
                   Resource: "*"
+                - Effect: Allow
+                  Action:
+                    - textract:AnalyzeDocument
+                    - textract:StartDocumentAnalysis
+                  Resource: "*"
 
 functions:
   search:
@@ -57,6 +94,12 @@ functions:
          path: /search
          method: get
          cors: false
+  extractText:
+    handler: packages/extract-text/lambda/extract.handler
+    timeout: 900
+    events:
+      - sns: ${self:provider.environment.TEXT_EXTRACTED_NOTIFICATION_SNS}
+
 
 
             
