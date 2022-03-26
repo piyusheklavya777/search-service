@@ -1,4 +1,5 @@
 const util = require('util');
+const safeStringify = require('fast-safe-stringify');
 /* eslint-disable no-console */
 class Logger {
   constructor() {
@@ -7,31 +8,21 @@ class Logger {
 
   async info(message, details = {}) {
     console.log(
-      util.inspect(
-        {
-          message,
-          details,
-          context: this.context,
-        },
-        false,
-        null,
-        true,
-      ),
+      safeStringify({
+        message,
+        details,
+        context: this.context,
+      }),
     );
   }
 
   async error(message, details = {}) {
     console.log(
-      util.inspect(
-        {
-          message,
-          details,
-          context: this.context,
-        },
-        false,
-        null,
-        true,
-      ),
+      safeStringify({
+        message,
+        details,
+        context: this.context,
+      }),
     );
   }
 

@@ -30,6 +30,7 @@
   "dependencies": {
     "aws-sdk": "^2.1097.0",
     "eslint-plugin-jest": "^26.1.2",
+    "fast-safe-stringify": "^2.1.1",
     "fs": "0.0.1-security",
     "lodash": "^4.17.21",
     "serverless-pseudo-parameters": "^2.6.1",
