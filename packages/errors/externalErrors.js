@@ -51,11 +51,11 @@ class RequestParametersInvalid extends ExternalError {
   }
 }
 
-class NoResultsFound extends ExternalError {
+class ResultNotFound extends ExternalError {
   constructor({ details }) {
     super({
       code: 'SS4004',
-      description: 'NoResultsFound',
+      description: 'ResultNotFound',
       details: details || 'No Results were found',
       httpCodeMapping: '404',
     });
@@ -65,6 +65,6 @@ class NoResultsFound extends ExternalError {
 module.exports = {
   RequestParametersMissing,
   RequestParametersInvalid,
-  NoResultsFound,
+  ResultNotFound,
   ExternalError,
 };
