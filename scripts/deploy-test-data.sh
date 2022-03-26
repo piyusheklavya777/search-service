@@ -18,5 +18,5 @@ aws s3 rm s3://$uniqueName-search-service --recursive
 # Upload the test files to the created bucket.
 aws s3 cp \
     "/Users/piyusheklavya/Desktop/personal-projects/search-service/test/mock-data/data" \
-    s3://$uniqueName-search-service/ \
+    s3://$uniqueName-search-service/pdfs \
     --recursive 
