@@ -1,9 +1,7 @@
 /* eslint-disable max-classes-per-file */
 /* eslint-disable no-underscore-dangle */
 class ExternalError extends Error {
-  constructor({
-    description, code, details, httpCodeMapping = '500',
-  }) {
+  constructor({ description, code, details, httpCodeMapping = '500' }) {
     const errorMessage = `Code: ${code}, details: ${details}, description: ${description}`;
     super(errorMessage);
     this._code = code;
@@ -62,7 +60,32 @@ class ResultNotFound extends ExternalError {
   }
 }
 
+class AWSLambdaIllegalInvocation extends ExternalError {
+  constructor({ details }) {
+    super({
+      code: 'SS5001',
+      description: 'AWSLambdaIllegalInvocation',
+      details:
+        details || 'AWS Lambda invoked with illegal/unexpected event object',
+      httpCodeMapping: null,
+    });
+  }
+}
+class AWSServiceInternalFailure extends ExternalError {
+  constructor({ details }) {
+    super({
+      code: 'SS4022',
+      description: 'AWSServiceInternalFailure',
+      details:
+        details || 'AWS Service malfunction',
+      httpCodeMapping: 422,
+    });
+  }
+}
+
 module.exports = {
+  AWSServiceInternalFailure,
+  AWSLambdaIllegalInvocation,
   RequestParametersMissing,
   RequestParametersInvalid,
   ResultNotFound,
