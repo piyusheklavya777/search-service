@@ -10,13 +10,13 @@ then
 fi
 
 # Create a s3 bucket with the unique name
-aws s3 mb s3://$uniqueName-search-service
+aws s3 mb s3://search-service-$uniqueName-824929266396-bucket
 
 # Delete all the objects in the bucket, if it already existed(the create would have failed):
-aws s3 rm s3://$uniqueName-search-service --recursive
+aws s3 rm s3://search-service-$uniqueName-824929266396-bucket --recursive
 
-# Upload the test files to the created bucket.
+# # Upload the test files to the created bucket.
 aws s3 cp \
     "/Users/piyusheklavya/Desktop/personal-projects/search-service/test/mock-data/data/pdfs" \
-    s3://$uniqueName-search-service \
+    s3://search-service-$uniqueName-824929266396-bucket \
     --recursive 
