@@ -78,7 +78,7 @@ async function startExtractText({ bucketName, fileName }) {
     logger.info('response from AWS Textract', syncResponse);
     return syncResponse;
   } catch (error) {
-    logger.silly(
+    logger.error(
       'error while calling AWS textract startDocumentAnalysis',
       error,
     );
@@ -86,8 +86,24 @@ async function startExtractText({ bucketName, fileName }) {
   }
 }
 
+async function getExtractionResult({ jobId }) {
+  const textract = new AWS.Textract();
+
+  const params = { JobId: jobId };
+
+  try {
+    const data = await textract.getDocumentAnalysis(params).promise();
+    logger.info('response from AWS Textract', data);
+    return data;
+  } catch (error) {
+    logger.error('error while calling AWS textract getDocumentAnalysis', error);
+    throw error;
+  }
+}
+
 module.exports = {
   listFilesFromS3Bucket,
+  getExtractionResult,
   loadFileFromS3,
   startExtractText,
 };

@@ -16,6 +16,7 @@ provider:
     STAGE: ${self:provider.stage}
     ACCOUNT_ID: "#{AWS::AccountId}"
     TEXT_EXTRACTED_NOTIFICATION_SNS: AmazonTextract-${opt:stage}-text-extracted-notification
+    S3_SEARCHBASE_BUCKET: search-service-${opt:stage, 'dev'}-#{AWS::AccountId}-bucket
     PUBLISH_TO_SNS_ROLE: PublishToSNS
 
 
@@ -99,6 +100,10 @@ functions:
     timeout: 900
     events:
       - sns: ${self:provider.environment.TEXT_EXTRACTED_NOTIFICATION_SNS}
+      - s3:
+          bucket: ${self:provider.environment.S3_SEARCHBASE_BUCKET}
+          event: s3:ObjectCreated:*
+          existing: true
 
 
 
