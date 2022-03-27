@@ -5,8 +5,8 @@
 __dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 chmod +x ${__dir}/set-credentials.sh
-chmod +x ${__dir}/deploy-test-data.sh
 chmod +x ${__dir}/deploy-service.sh
+chmod +x ${__dir}/deploy-test-data.sh
 chmod +x ${__dir}/deploy-proxy.sh
 
 . ${__dir}/set-credentials.sh
