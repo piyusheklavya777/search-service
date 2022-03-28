@@ -28,6 +28,7 @@
     "prettier": "^2.6.0"
   },
   "dependencies": {
+    "any-text": "^1.2.0",
     "aws-sdk": "^2.1097.0",
     "eslint-plugin-jest": "^26.1.2",
     "fast-safe-stringify": "^2.1.1",

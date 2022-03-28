@@ -44,10 +44,10 @@ resources:
                   Action:
                     - sns:Publish
                   Resource: "*"
-    GetLambdaRole:
+    LambdaRole:
       Type: AWS::IAM::Role
       Properties:
-        RoleName: GetLambdaRole
+        RoleName: LambdaRole
         AssumeRolePolicyDocument:
           Version: '2012-10-17'
           Statement:
@@ -82,14 +82,15 @@ resources:
                 - Effect: Allow
                   Action:
                     - textract:AnalyzeDocument
-                    - textract:StartDocumentAnalysis
+                    - textract:StartDocumentTextDetection
+                    - textract:GetDocumentTextDetection
                   Resource: "*"
 
 functions:
   search:
     handler: packages/search/lambda/get.handler
     timeout: 120
-    role: GetLambdaRole
+    role: LambdaRole
     events:
       - http:
          path: /search
@@ -98,6 +99,7 @@ functions:
   extractText:
     handler: packages/extract-text/lambda/extract.handler
     timeout: 900
+    role: LambdaRole
     events:
       - sns: ${self:provider.environment.TEXT_EXTRACTED_NOTIFICATION_SNS}
       - s3:
