@@ -7,8 +7,7 @@ const {
 } = require('../../errors/externalErrors');
 const { handleExtractedText } = require('../libs/get-extracted-text');
 const { handleNewFile } = require('../libs/handle-new-file-upload');
-
-// const { S3_SEARCHBASE_BUCKET, TEXT_EXTRACTED_NOTIFICATION_SNS } = process.env;
+const { startExtraction } = require('../libs/start-extraction');
 
 const handler = async (event, context) => {
   logger.info('lambda event: ', event);
@@ -18,10 +17,18 @@ const handler = async (event, context) => {
     if (invocationSource === AWSServices.S3) {
       const fileName = _.get(event, ['Records', '0', 's3', 'object', 'key']);
       const bucketName = _.get(event, ['Records', '0', 's3', 'bucket', 'name']);
+
       logger.info('New file upload detected.', { bucketName, fileName });
-      await handleNewFile({ bucketName, fileName });
+      const { EXTRACT_TEXT_WITH_AWS_TEXTRACT } = process.env;
+      if (EXTRACT_TEXT_WITH_AWS_TEXTRACT === 'true') {
+        logger.info('text extractio redirecting to aws textract');
+        await startExtraction({ bucketName, fileName });
+      } else {
+        logger.info('handling text extraction locally');
+        await handleNewFile({ bucketName, fileName });
+      }
     } else if (invocationSource === AWSServices.SNS)
-      await _handleAsyncTextExtractCompleteNotification();
+      await _handleAsyncTextExtractCompleteNotification(event);
   } catch (error) {
     logger.error('An error occurred while processing the event', error);
   }
@@ -44,7 +51,7 @@ const handler = async (event, context) => {
  * When SNS notification comes for the asynchronous text detection operation done by AWS Textract, this lambda gets the results from textract
  * and processes it.
  */
-async function _handleAsyncTextExtractCompleteNotification() {
+async function _handleAsyncTextExtractCompleteNotification(event) {
   const message = JSON.parse(_.get(event, ['Records', '0', 'Sns', 'Message']));
   const jobId = _.get(message, 'JobId');
   const status = _.get(message, 'Status');
