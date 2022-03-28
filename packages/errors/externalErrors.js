@@ -84,11 +84,23 @@ class AWSServiceInternalFailure extends ExternalError {
   }
 }
 
+class ElasticSearchAPIError extends ExternalError {
+  constructor({ details }) {
+    super({
+      code: 'SS5006',
+      description: 'ElasticSearchAPIError',
+      details: details || 'Error while interacting with Elastic Search API',
+      httpCodeMapping: '500',
+    })
+  }
+}
+
 module.exports = {
   AWSServiceInternalFailure,
   AWSLambdaIllegalInvocation,
   RequestParametersMissing,
   RequestParametersInvalid,
+  ElasticSearchAPIError,
   ResultNotFound,
   ExternalError,
 };
