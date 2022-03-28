@@ -2,8 +2,6 @@
 
 # set -e # when an error occurs, halt execution and throw
 
-read -p "please enter a unique name for the s3 buxket containing test data: " uniqueName
-
 if [ -z "$uniqueName" ]
 then
     return 1
