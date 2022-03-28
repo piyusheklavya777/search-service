@@ -1,7 +1,9 @@
 /* eslint-disable max-classes-per-file */
 /* eslint-disable no-underscore-dangle */
 class ExternalError extends Error {
-  constructor({ description, code, details, httpCodeMapping = '500' }) {
+  constructor({
+    description, code, details, httpCodeMapping = '500',
+  }) {
     const errorMessage = `Code: ${code}, details: ${details}, description: ${description}`;
     super(errorMessage);
     this._code = code;
@@ -76,8 +78,7 @@ class AWSServiceInternalFailure extends ExternalError {
     super({
       code: 'SS4022',
       description: 'AWSServiceInternalFailure',
-      details:
-        details || 'AWS Service malfunction',
+      details: details || 'AWS Service malfunction',
       httpCodeMapping: 422,
     });
   }

@@ -41,6 +41,7 @@ async function loadFileFromS3({ bucketName, fileName }) {
   } catch (e) {
     logger.error('Error occurred while trying to load files from s3: ', e);
   }
+  logger.info(`file buffer downloaded successfully from s3 ${bucketName}/${fileName}`);
   return _.get(response, 'Body');
 }
 
@@ -64,7 +65,6 @@ async function startExtractText({ bucketName, fileName }) {
         Name: fileName,
       },
     },
-    FeatureTypes: ['TABLES', 'FORMS'],
     NotificationChannel: {
       RoleArn: `arn:aws:iam::${ACCOUNT_ID}:role/${PUBLISH_TO_SNS_ROLE}`,
       SNSTopicArn: `arn:aws:sns:${REGION}:${ACCOUNT_ID}:${TEXT_EXTRACTED_NOTIFICATION_SNS}`,
@@ -74,7 +74,7 @@ async function startExtractText({ bucketName, fileName }) {
   logger.info('parameters for aws textract startDocumentAnalysis: ', params);
 
   try {
-    const syncResponse = await textract.startDocumentAnalysis(params).promise();
+    const syncResponse = await textract.startDocumentTextDetection(params).promise();
     logger.info('response from AWS Textract', syncResponse);
     return syncResponse;
   } catch (error) {
@@ -92,7 +92,7 @@ async function getExtractionResult({ jobId }) {
   const params = { JobId: jobId };
 
   try {
-    const data = await textract.getDocumentAnalysis(params).promise();
+    const data = await textract.getDocumentTextDetection(params).promise();
     logger.info('response from AWS Textract', data);
     return data;
   } catch (error) {
