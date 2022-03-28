@@ -19,6 +19,9 @@ provider:
     S3_SEARCHBASE_BUCKET: search-service-${opt:stage, 'dev'}-#{AWS::AccountId}-bucket
     PUBLISH_TO_SNS_ROLE: PublishToSNS
     # EXTRACT_TEXT_WITH_AWS_TEXTRACT: true # uncomment to enable text search with aws textract
+    ELASTIC_URL: ''
+    ELASTIC_USERNAME: ''
+    ELASTIC_PASSWORD: ''
 
 resources:
   Resources:
