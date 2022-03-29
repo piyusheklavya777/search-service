@@ -5,3 +5,5 @@
 
 # Useful links:
 - https://theaws.blog/textract-nodejs-sdk-by-example/
+- https://www.elastic.co/guide/en/elasticsearch/client/javascript-api/current/introduction.html
+- 

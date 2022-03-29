@@ -25,9 +25,8 @@ const extractTextFromFile = async ({ fileLocation }) => {
     throw new Error('InSufficient parameters supplied to function');
   try {
     const rawText = await reader.getText(fileLocation);
-    const textSeparatedByNewLine = rawText.split('\n');
-
-    return textSeparatedByNewLine;
+    logger.info('text retrieved from document successfully');
+    return rawText;
   } catch (error) {
     logger.error('Error while extracting raw text from file', error);
   }
