@@ -4,7 +4,9 @@ const { ElasticSearchSDKError } = require('../errors/externalErrors');
 const logger = require('../utilities/logger');
 
 class ElasticSearch {
-  constructor({ url, username, password, cloudId }) {
+  constructor({
+    url, username, password, cloudId,
+  }) {
     this.url = url;
     this.username = username;
     this.password = password;

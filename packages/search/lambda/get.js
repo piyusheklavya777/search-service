@@ -4,7 +4,7 @@
 /* eslint-disable no-underscore-dangle */
 /* eslint-disable no-inner-declarations */
 const _ = require('lodash');
-const { RequestParametersMissing, RequestParametersInvalid, ExternalError, NoResultsFound } = require('../../errors/externalErrors');
+const { RequestParametersMissing, RequestParametersInvalid, ExternalError } = require('../../errors/externalErrors');
 const {
   buildSuccessOkResponse,
   buildInternalFailureResponse,
@@ -14,7 +14,7 @@ const {
 const logger = require('../../utilities/logger');
 const { get } = require('../libs/get');
 
-const handler = async (event, context) => {
+const handler = async (event, _context) => {
   let response;
   let queryString;
   try {
@@ -38,11 +38,6 @@ const handler = async (event, context) => {
     }
 
     response = await get({ queryString });
-
-    if (_.isNil(response))
-      throw new NoResultsFound({
-        details: 'No matching results were found for the query',
-      });
 
     return buildSuccessOkResponse({
       data: response,
