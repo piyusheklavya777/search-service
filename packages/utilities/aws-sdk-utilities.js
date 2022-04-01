@@ -7,6 +7,7 @@ const {
   TEXT_EXTRACTED_NOTIFICATION_SNS,
   REGION,
   PUBLISH_TO_SNS_ROLE,
+  DYNAMO_DB_TABLE_NAME,
 } = process.env;
 
 async function listFilesFromS3Bucket({ bucketName }) {
@@ -41,7 +42,9 @@ async function loadFileFromS3({ bucketName, fileName }) {
   } catch (e) {
     logger.error('Error occurred while trying to load files from s3: ', e);
   }
-  logger.info(`file buffer downloaded successfully from s3 ${bucketName}/${fileName}`);
+  logger.info(
+    `file buffer downloaded successfully from s3 ${bucketName}/${fileName}`,
+  );
   return _.get(response, 'Body');
 }
 
@@ -74,7 +77,9 @@ async function startExtractText({ bucketName, fileName }) {
   logger.info('parameters for aws textract startDocumentAnalysis: ', params);
 
   try {
-    const syncResponse = await textract.startDocumentTextDetection(params).promise();
+    const syncResponse = await textract
+      .startDocumentTextDetection(params)
+      .promise();
     logger.info('response from AWS Textract', syncResponse);
     return syncResponse;
   } catch (error) {
@@ -101,9 +106,68 @@ async function getExtractionResult({ jobId }) {
   }
 }
 
+async function createFileAttributes({ elasticId, fileName, bucketName }) {
+  if (!elasticId || !bucketName || !fileName || !DYNAMO_DB_TABLE_NAME)
+    throw new Error(
+      'Insufficient parameters provided for creating a record in dynamoDB table',
+    );
+
+  const params = {
+    TableName: DYNAMO_DB_TABLE_NAME,
+    Item: {
+      elasticId,
+      fileName,
+      bucketName,
+    },
+  };
+  logger.info('item to upload to dynamodb: ', params);
+
+  const dynamoDB = new AWS.DynamoDB();
+  let response;
+  try {
+    response = await dynamoDB.putItem(params).promise();
+    logger.info(
+      'successfully created record in dynamoDB. SDK response: ',
+      response,
+    );
+    return response;
+  } catch (error) {
+    logger.error('ERROR while trying to create record in DynamoDB', error);
+    throw error;
+  }
+}
+
+async function getFileAttributes({ elasticId }) {
+  if (!elasticId || !DYNAMO_DB_TABLE_NAME)
+    throw new Error(
+      'Insufficient parameters provided for querying dynamoDB table',
+    );
+  const dynamoDB = new AWS.DynamoDB();
+  const params = {
+    TableName: DYNAMO_DB_TABLE_NAME,
+    Key: {
+      elasticId: { S: elasticId },
+    },
+  };
+  logger.info('Querying dynamoDB with params: ', params);
+
+  let response;
+  try {
+    response = await dynamoDB.getItem(params).promise();
+    logger.info('raw respone form dynamo db', response);
+    if (response === {}) return undefined;
+    return response;
+  } catch (error) {
+    logger.error('error while querying data from the dynamoDB table', error);
+    throw error;
+  }
+}
+
 module.exports = {
   listFilesFromS3Bucket,
   getExtractionResult,
   loadFileFromS3,
   startExtractText,
+  createFileAttributes,
+  getFileAttributes,
 };

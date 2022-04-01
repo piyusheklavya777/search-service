@@ -8,4 +8,10 @@ const {
   API_KEY: apiKey,
 } = process.env;
 
-module.exports = new ElasticSearch({ url, username, password, cloudId, apiKey });
+module.exports = new ElasticSearch({
+  url,
+  username,
+  password,
+  cloudId,
+  apiKey,
+});

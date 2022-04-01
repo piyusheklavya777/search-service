@@ -1,7 +1,12 @@
+const _ = require('lodash');
 const { Client } = require('@elastic/elasticsearch');
 
 const { ElasticSearchSDKError } = require('../errors/externalErrors');
 const logger = require('../utilities/logger');
+const {
+  createFileAttributes,
+  getFileAttributes,
+} = require('../utilities/aws-sdk-utilities');
 
 class ElasticSearch {
   constructor({
@@ -16,24 +21,26 @@ class ElasticSearch {
     });
   }
 
-  async indexDocument({ indexName, data }) {
+  async indexDocument({ fileName, data, bucketName }) {
     let response;
-    if (!indexName || !data || typeof indexName !== 'string')
+    if (!fileName || !data || typeof fileName !== 'string')
       throw new ElasticSearchSDKError({
         details:
-          'Insufficient/Invalid parameters provided for indexinf document',
+          'Insufficient/Invalid parameters provided for indexing document',
       });
 
     try {
       response = await this.elasticClient.index({
-        index: indexName.toLowerCase(),
+        index: fileName.toLowerCase(),
         document: { content: data },
       });
-      logger.info('document indexing attempted. SDK response: ', response);
+      logger.info('document indexing successful. SDK response: ', response);
     } catch (error) {
       logger.error('Error while indexing document', error);
       throw error;
     }
+    const elasticId = _.get(response, ['_id']);
+    await createFileAttributes({ fileName, bucketName, elasticId });
   }
 
   async textSearch({ searchQuery }) {
@@ -48,7 +55,20 @@ class ElasticSearch {
         q: searchQuery,
       });
       logger.info('response returned from elastic search sdk: ', response);
-      return response;
+
+      const elasticIds = _.map(
+        _.get(response, ['hits', 'hits']),
+        ({ _id }) => _id,
+      );
+
+      logger.info('elastic search ids for all the matches: ', elasticIds);
+
+      const fileAttributes = await Promise.all(
+        _.map(elasticIds, (elasticId) => getFileAttributes({ elasticId })),
+      );
+
+      logger.info('file Attributes for the search results: ', fileAttributes);
+      return fileAttributes;
     } catch (error) {
       logger.error(
         `Error while searching with the query ${searchQuery}`,

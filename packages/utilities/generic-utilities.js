@@ -17,6 +17,7 @@ const writeFileToLocalStorage = async ({
   if (!fileBuffer)
     throw new Error('InSufficient parameters supplied to function');
   await fs.writeFileSync(`${location}${fileName}`, fileBuffer);
+  logger.info(`buffer written as file at location: ${location}${fileName}`);
   return `${location}${fileName}`;
 };
 
@@ -29,6 +30,7 @@ const extractTextFromFile = async ({ fileLocation }) => {
     return rawText;
   } catch (error) {
     logger.error('Error while extracting raw text from file', error);
+    throw error;
   }
 };
 

@@ -17,14 +17,12 @@ const get = async ({ queryString }) => {
     throw error;
   }
   function _translateResponse() {
-    const hits = _.get(response, ['hits', 'total', 'value'], 0);
-    const results = _.get(response, ['hits', 'hits'], []);
-    if (!hits || hits === '0' || results.length === 0)
+    if (!response || _.isEmpty(response))
       throw new ResultNotFound({
         details: `No result found for the query string ${queryString}`,
       });
 
-    return results;
+    return response;
   }
 };
 

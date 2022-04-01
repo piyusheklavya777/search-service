@@ -21,7 +21,7 @@ const handler = async (event, context) => {
       logger.info('New file upload detected.', { bucketName, fileName });
       const { EXTRACT_TEXT_WITH_AWS_TEXTRACT } = process.env;
       if (EXTRACT_TEXT_WITH_AWS_TEXTRACT === 'true') {
-        logger.info('text extractio redirecting to aws textract');
+        logger.info('redirecting to aws textract');
         await startExtraction({ bucketName, fileName });
       } else {
         logger.info('handling text extraction locally');
