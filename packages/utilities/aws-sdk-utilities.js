@@ -115,9 +115,15 @@ async function createFileAttributes({ elasticId, fileName, bucketName }) {
   const params = {
     TableName: DYNAMO_DB_TABLE_NAME,
     Item: {
-      elasticId,
-      fileName,
-      bucketName,
+      elasticId: {
+        S: elasticId,
+      },
+      fileName: {
+        S: fileName,
+      },
+      bucketName: {
+        S: bucketName,
+      },
     },
   };
   logger.info('item to upload to dynamodb: ', params);
@@ -163,6 +169,32 @@ async function getFileAttributes({ elasticId }) {
   }
 }
 
+async function checkIfFileNameExists({ fileName }) {
+  if (!fileName || !DYNAMO_DB_TABLE_NAME)
+    throw new Error(
+      'Insufficient parameters provided for querying dynamoDB table',
+    );
+  const dynamoDB = new AWS.DynamoDB();
+  const params = {
+    TableName: DYNAMO_DB_TABLE_NAME,
+    Key: {
+      fileName: { S: fileName },
+    },
+  };
+  logger.info('Querying dynamoDB with params: ', params);
+
+  let response;
+  try {
+    response = await dynamoDB.getItem(params).promise();
+    logger.info('raw respone form dynamo db', response);
+    if (response === {}) return undefined;
+    return response;
+  } catch (error) {
+    logger.error('error while querying data from the dynamoDB table', error);
+    throw error;
+  }
+}
+
 module.exports = {
   listFilesFromS3Bucket,
   getExtractionResult,
@@ -170,4 +202,5 @@ module.exports = {
   startExtractText,
   createFileAttributes,
   getFileAttributes,
+  checkIfFileNameExists,
 };

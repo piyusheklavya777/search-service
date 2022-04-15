@@ -4,8 +4,8 @@ env:
   es2021: true
 extends:
   - airbnb-base
-  # - plugin:prettier/recommended
-  # - plugin:jest/recommended
+  - plugin:prettier/recommended
+  - plugin:jest/recommended
 parserOptions:
   ecmaVersion: latest
 rules:
@@ -22,6 +22,4 @@ rules:
   no-unused-vars:
     - error
     - argsIgnorePattern: ^_
-
-# plugins:
-#   - jest
+  jest/no-disabled-tests: 'warn'
