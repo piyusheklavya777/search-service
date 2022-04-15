@@ -1,9 +1,7 @@
 /* eslint-disable max-classes-per-file */
 /* eslint-disable no-underscore-dangle */
 class ExternalError extends Error {
-  constructor({
-    description, code, details, httpCodeMapping = '500',
-  }) {
+  constructor({ description, code, details, httpCodeMapping = '500' }) {
     const errorMessage = `Code: ${code}, details: ${details}, description: ${description}`;
     super(errorMessage);
     this._code = code;
@@ -91,7 +89,18 @@ class ElasticSearchSDKError extends ExternalError {
       description: 'ElasticSearchSDKError',
       details: details || 'Error while interacting with Elastic Search SDK',
       httpCodeMapping: '500',
-    })
+    });
+  }
+}
+
+class FileNameAlreadyExists extends ExternalError {
+  constructor({ fileName }) {
+    super({
+      code: 'SS4005',
+      decription: 'FileNameAlreadyExists',
+      details: `Another file already exists with the same file name as ${fileName}`,
+      httpCodeMapping: '409',
+    });
   }
 }
 
@@ -101,6 +110,7 @@ module.exports = {
   RequestParametersMissing,
   RequestParametersInvalid,
   ElasticSearchSDKError,
+  FileNameAlreadyExists,
   ResultNotFound,
   ExternalError,
 };

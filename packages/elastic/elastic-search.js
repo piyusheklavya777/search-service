@@ -66,8 +66,6 @@ class ElasticSearch {
       const fileAttributes = await Promise.all(
         _.map(elasticIds, (elasticId) => getFileAttributes({ elasticId })),
       );
-
-      logger.info('file Attributes for the search results: ', fileAttributes);
       return fileAttributes;
     } catch (error) {
       logger.error(
