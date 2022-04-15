@@ -42,7 +42,7 @@ const handler = async (event, _context) => {
     return buildSuccessOkResponse({
       data: response,
       metadata: {
-        request: {},
+        request: { queryStringParameters },
       },
     });
 

@@ -17,7 +17,7 @@ const handleNewFile = async ({ bucketName, fileName }) => {
   });
   const text = await extractTextFromFile({ fileLocation: localLocationOfFile });
 
-  await elasticClient.indexDocument({ fileName, data: text });
+  await elasticClient.indexDocument({ fileName, data: text, bucketName });
 };
 
 module.exports = { handleNewFile };

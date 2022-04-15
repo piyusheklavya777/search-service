@@ -4,10 +4,12 @@ const { AWSEventSource, AWSServices } = require('../../utilities/enums');
 const {
   AWSLambdaIllegalInvocation,
   AWSServiceInternalFailure,
+  FileNameAlreadyExists,
 } = require('../../errors/externalErrors');
 const { handleExtractedText } = require('../libs/get-extracted-text');
 const { handleNewFile } = require('../libs/handle-new-file-upload');
 const { startExtraction } = require('../libs/start-extraction');
+const { checkIfFileNameExists } = require('../../utilities/aws-sdk-utilities');
 
 const handler = async (event, context) => {
   logger.info('lambda event: ', event);
@@ -19,6 +21,7 @@ const handler = async (event, context) => {
       const bucketName = _.get(event, ['Records', '0', 's3', 'bucket', 'name']);
 
       logger.info('New file upload detected.', { bucketName, fileName });
+      _validateForDuplicate({ fileName });
       const { EXTRACT_TEXT_WITH_AWS_TEXTRACT } = process.env;
       if (EXTRACT_TEXT_WITH_AWS_TEXTRACT === 'true') {
         logger.info('redirecting to aws textract');
@@ -31,6 +34,7 @@ const handler = async (event, context) => {
       await _handleAsyncTextExtractCompleteNotification(event);
   } catch (error) {
     logger.error('An error occurred while processing the event', error);
+    // do not throw error from lambdalevel unless it is supposed to be retried.
   }
 
   function _findInvocationSource() {
@@ -72,6 +76,12 @@ async function _handleAsyncTextExtractCompleteNotification(event) {
     fileName,
     bucketName,
   });
+}
+
+async function _validateForDuplicate({ fileName }) {
+  const recordInDynamoDB = await checkIfFileNameExists({ fileName });
+  if (!_.isEmpty(recordInDynamoDB))
+    throw new FileNameAlreadyExists({ fileName });
 }
 
 module.exports = { handler };
