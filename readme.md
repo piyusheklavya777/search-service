@@ -1,5 +1,4 @@
-# Describe :
-- Search Service is a project that lets users search for any text, and find matches from a list of pre uploaded files. It exposes interface to upload the files to search from, list them, delete them, and to search within these files. ElasticSearch enabled deployments also let you search for text found within image files.
+Search Service is a project that lets users search for any text, and find matches from a list of pre uploaded files. It exposes interface to upload the files to search from, list them, delete them, and to search within these files. ElasticSearch enabled deployments also let you search for text found within image files.
 
 
 # Architecture : 
